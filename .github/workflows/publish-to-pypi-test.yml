@@ -47,6 +47,8 @@ jobs:
 
     steps:
       - uses: actions/checkout@master
+        with:
+          github_token: ${{ secrets.PAT_Token }}
 
       - name: Set up Python 3.7
         uses: actions/setup-python@v1
@@ -91,7 +93,7 @@ jobs:
       - name: Push Commit from Bump2Version
         uses: ad-m/github-push-action@master
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
+          github_token: ${{ secrets.PAT_Token }}
           branch: ${{ github.ref }}
         if: github.ref == 'refs/heads/master'
 
@@ -126,7 +128,7 @@ jobs:
       with:
         version_regex: ^v[[:digit:]]+\.[[:digit:]]+\.[[:digit:]]+
       env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        GITHUB_TOKEN: ${{ secrets.PAT_Token }}
     - name: Create GitHub release
       uses: Roang-zero1/github-upload-release-artifacts-action@master
       with:
@@ -134,4 +136,4 @@ jobs:
         , ./dist/*
         ]'
       env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        GITHUB_TOKEN: ${{ secrets.PAT_Token }}
