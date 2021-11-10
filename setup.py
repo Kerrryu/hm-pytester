@@ -3,7 +3,7 @@ from os.path import join, dirname
 
 setup(
     name='hm_pyhelper_smaj_test',
-    version='0.9.5',
+    version='0.9.6',
     author="Sebastian Maj",
     author_email="smaj@nebra.com",
     description="Helium Python Helper Test Package",
@@ -13,7 +13,7 @@ setup(
     install_requires=[
         'requests>=2.26.0',
         'jsonrpcclient==3.3.6',
-        'retry==0.9.5',
+        'retry==0.9.6',
         'bump2version'
     ],
     project_urls={
