@@ -81,7 +81,7 @@ jobs:
 
       - name: Assign Git User Name
         run: |
-          git config --global user.name "Mr Bump Nebra"
+          git config --global user.name "Mr Bump Nebra" 
 
       - name: Bump Version
         run: |
