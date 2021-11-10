@@ -46,7 +46,7 @@ jobs:
     needs: [rust-compile]
 
     steps:
-      - uses: actions/checkout@master
+      - uses: actions/checkout@v2
         with:
           github_token: ${{ secrets.PAT_Token }}
 
@@ -89,6 +89,10 @@ jobs:
         run: |
           bump2version patch setup.py
         if: github.ref == 'refs/heads/master'
+
+      - uses: actions/checkout@v2
+        with:
+          github_token: ${{ secrets.PAT_Token }}
 
       - name: Push Commit from Bump2Version
         uses: ad-m/github-push-action@master
