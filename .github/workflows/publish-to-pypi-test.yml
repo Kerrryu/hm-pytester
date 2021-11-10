@@ -46,7 +46,7 @@ jobs:
     needs: [rust-compile]
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v1
         with:
           github_token: ${{ secrets.PAT_Token }}
 
@@ -122,7 +122,7 @@ jobs:
     needs: [build-n-publish]
     if: github.ref == 'refs/heads/master'
     steps:
-    - uses: actions/checkout@master
+    - uses: actions/checkout@v1
     - name: Create release
       uses: Roang-zero1/github-create-release-action@master
       with:
