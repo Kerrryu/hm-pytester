@@ -46,9 +46,10 @@ jobs:
     needs: [rust-compile]
 
     steps:
-      - uses: actions/checkout@v1
+      - uses: actions/checkout@v2
         with:
           github_token: ${{ secrets.PAT_Token }}
+          persist-credentials: false
 
       - name: Set up Python 3.7
         uses: actions/setup-python@v1
