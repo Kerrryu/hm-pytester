@@ -48,7 +48,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
         with:
-          github_token: ${{ secrets.PAT_TOKEN }}
+          github_token: ${{ secrets.PAT_TOKEN }} 
           persist-credentials: false
 
       - name: Set up Python 3.7
