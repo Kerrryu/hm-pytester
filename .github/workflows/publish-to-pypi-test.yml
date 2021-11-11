@@ -132,4 +132,5 @@ jobs:
           artifacts: "dist/*"
           # bodyFile: "body.md"
           token: ${{ secrets.PAT_TOKEN }}
+          tag: ${GITHUB_REF##*/}
         if: ${{ (github.ref == 'refs/heads/master' && contains(toJSON(github.event.commits.*.message), 'Bump version:')) }}
