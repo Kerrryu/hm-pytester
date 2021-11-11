@@ -48,7 +48,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
         with:
-          github_token: ${{ secrets.PAT_TOKEN }} 
+          github_token: ${{ secrets.GITHUB_TOKEN }} 
           persist-credentials: false
           fetch-depth: 0
 
@@ -95,7 +95,7 @@ jobs:
       - name: Push Commit from Bump2Version
         uses: ad-m/github-push-action@master
         with:
-          github_token: ${{ secrets.PAT_TOKEN }}
+          github_token: ${{ secrets.GITHUB_TOKEN }}
           branch: ${{ github.ref }}
         if: ${{ (github.ref == 'refs/heads/master' && ! contains(toJSON(github.event.commits.*.message), 'Bump version:')) }}
 
@@ -118,21 +118,20 @@ jobs:
           password: ${{ secrets.TEST_PYPI_API_TOKEN }}
           repository_url: https://test.pypi.org/legacy/
         if: ${{ (github.ref == 'refs/heads/master' && ! contains(toJSON(github.event.commits.*.message), 'Bump version:')) }}
+        
 
-      # - name: Upload binaries to release
-      #   uses: svenstaro/upload-release-action@v2
-      #   with:
-      #     repo_token: ${{ secrets.PAT_TOKEN }}
-      #     file: dist/
-      #     tag: ${{ github.ref }}
-      #     overwrite: true
-      #     body: "New Release"
+  release:
+    name: Release build on git
+    runs-on: ubuntu-18.04
+    needs: [build-n-publish]
+    if: ${{ (github.ref == 'refs/heads/master' && contains(toJSON(github.event.commits.*.message), 'Bump version:')) }}
 
-      # - name: Get the version
-      #   id: get_version
-      #   run: echo ::set-output name=SOURCE_TAG::${GITHUB_REF#refs/tags/}
-      #   if: ${{ (github.ref == 'refs/heads/master' && contains(toJSON(github.event.commits.*.message), 'Bump version:')) }}
-
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }} 
+          fetch-depth: 0
+      
       - name: 'Get Previous tag'
         id: previoustag
         uses: "WyriHaximus/github-action-get-previous-tag@v1"
@@ -141,6 +140,5 @@ jobs:
         with:
           artifacts: "dist/*"
           # bodyFile: "body.md"
-          token: ${{ secrets.PAT_TOKEN }}
+          token: ${{ secrets.GITHUB_TOKEN }}
           tag: ${{ steps.previoustag.outputs.tag }}
-        if: ${{ (github.ref == 'refs/heads/master' && contains(toJSON(github.event.commits.*.message), 'Bump version:')) }}
