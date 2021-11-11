@@ -50,6 +50,7 @@ jobs:
         with:
           github_token: ${{ secrets.PAT_TOKEN }} 
           persist-credentials: false
+          fetch-depth: 0
 
       - name: Set up Python 3.7
         uses: actions/setup-python@v1
@@ -138,4 +139,5 @@ jobs:
           # bodyFile: "body.md"
           token: ${{ secrets.PAT_TOKEN }}
           tag: ${{ steps.get_version.outputs.SOURCE_TAG }}
+        run: echo ${{ steps.get_version.outputs.SOURCE_TAG }}
         if: ${{ (github.ref == 'refs/heads/master' && contains(toJSON(github.event.commits.*.message), 'Bump version:')) }}
