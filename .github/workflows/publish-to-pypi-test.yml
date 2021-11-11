@@ -139,5 +139,4 @@ jobs:
           # bodyFile: "body.md"
           token: ${{ secrets.PAT_TOKEN }}
           tag: ${{ steps.get_version.outputs.SOURCE_TAG }}
-        run: echo ${{ steps.get_version.outputs.SOURCE_TAG }}
         if: ${{ (github.ref == 'refs/heads/master' && contains(toJSON(github.event.commits.*.message), 'Bump version:')) }}
