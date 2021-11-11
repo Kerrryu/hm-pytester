@@ -132,7 +132,7 @@ jobs:
           repo_token: "${{ secrets.PAT_TOKEN }}"
           prerelease: false
           files: |
-            dist/*
+            ./dist/*
 
   # release:
   #   runs-on: ubuntu-latest
