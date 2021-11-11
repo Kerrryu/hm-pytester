@@ -128,15 +128,19 @@ jobs:
       #     overwrite: true
       #     body: "New Release"
 
-      - name: Get the version
-        id: get_version
-        run: echo ::set-output name=SOURCE_TAG::${GITHUB_REF#refs/tags/}
-        if: ${{ (github.ref == 'refs/heads/master' && contains(toJSON(github.event.commits.*.message), 'Bump version:')) }}
+      # - name: Get the version
+      #   id: get_version
+      #   run: echo ::set-output name=SOURCE_TAG::${GITHUB_REF#refs/tags/}
+      #   if: ${{ (github.ref == 'refs/heads/master' && contains(toJSON(github.event.commits.*.message), 'Bump version:')) }}
+
+      - name: 'Get Previous tag'
+        id: previoustag
+        uses: "WyriHaximus/github-action-get-previous-tag@v1"
 
       - uses: ncipollo/release-action@v1
         with:
           artifacts: "dist/*"
           # bodyFile: "body.md"
           token: ${{ secrets.PAT_TOKEN }}
-          tag: ${{ steps.get_version.outputs.SOURCE_TAG }}
+          tag: ${{ steps.previoustag.outputs.tag }}
         if: ${{ (github.ref == 'refs/heads/master' && contains(toJSON(github.event.commits.*.message), 'Bump version:')) }}
