@@ -127,10 +127,15 @@ jobs:
       #     overwrite: true
       #     body: "New Release"
 
+      - name: Get the version
+        id: get_version
+        run: echo ::set-output name=VERSION::${GITHUB_REF/refs\/tags\//}
+        if: ${{ (github.ref == 'refs/heads/master' && contains(toJSON(github.event.commits.*.message), 'Bump version:')) }}
+
       - uses: ncipollo/release-action@v1
         with:
           artifacts: "dist/*"
           # bodyFile: "body.md"
           token: ${{ secrets.PAT_TOKEN }}
-          tag: ${GITHUB_REF##*/}
+          tag: ${{ steps.get_version.outputs.VERSION }}
         if: ${{ (github.ref == 'refs/heads/master' && contains(toJSON(github.event.commits.*.message), 'Bump version:')) }}
