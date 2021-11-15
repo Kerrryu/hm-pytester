@@ -73,31 +73,24 @@ jobs:
       - name: Install pypa/build
         run: |
           python -m pip install build --user
-
-      - name: Install bump2version
+          
+      - name: Create branch and bump version
         run: |
           python -m pip install bump2version
-        if: github.ref == 'refs/heads/master'
-
-      - name: Assign Git User Email
-        run: |
           git config --global user.email "mrbump@nebra.com"
-
-      - name: Assign Git User Name
-        run: |
           git config --global user.name "Mr Bump Nebra"
-
-      - name: Bump Version
-        run: |
+          git checkout -b bumpversion
           bump2version patch setup.py
+          git commit -am "Automated version bump"
+          git push
         if: ${{ (github.ref == 'refs/heads/master' && ! contains(toJSON(github.event.commits.*.message), 'Bump version:')) }}
 
-      - name: Push Commit from Bump2Version
-        uses: ad-m/github-push-action@master
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          branch: ${{ github.ref }}
-        if: ${{ (github.ref == 'refs/heads/master' && ! contains(toJSON(github.event.commits.*.message), 'Bump version:')) }}
+      # - name: Push Commit from Bump2Version
+      #   uses: ad-m/github-push-action@master
+      #   with:
+      #     github_token: ${{ secrets.GITHUB_TOKEN }}
+      #     branch: ${{ github.ref }}
+      #   if: ${{ (github.ref == 'refs/heads/master' && ! contains(toJSON(github.event.commits.*.message), 'Bump version:')) }}
 
       - name: Build a binary wheel and a source tarball
         run: |
