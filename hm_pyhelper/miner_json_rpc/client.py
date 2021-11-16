@@ -3,6 +3,7 @@ from jsonrpcclient import request
 from hm_pyhelper.miner_json_rpc.exceptions import MinerConnectionError
 from hm_pyhelper.miner_json_rpc.exceptions import MinerMalformedURL
 from hm_pyhelper.miner_json_rpc.exceptions import MinerRegionUnset
+from urllib3.exceptions import MaxRetryError
 
 
 class Client(object):
@@ -23,6 +24,18 @@ class Client(object):
                 "Miner JSONRPC URL '%s' is not a valid URL"
                 % self.url
             )
+        except ConnectionError as e:
+            raise MinerConnectionError(
+                "Unable to connect to miner %s" % e
+            ).with_traceback(e.__traceback__)
+        except ConnectionRefusedError as e:
+            raise MinerConnectionError(
+                "Unable to connect to miner %s" % e
+            ).with_traceback(e.__traceback__)
+        except MaxRetryError as e:
+            raise MinerConnectionError(
+                "Unable to connect to miner %s" % e
+            ).with_traceback(e.__traceback__)
         except Exception as e:
             raise MinerConnectionError(
                 "Unable to connect to miner %s" % e
