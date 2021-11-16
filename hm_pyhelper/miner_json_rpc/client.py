@@ -17,7 +17,7 @@ class Client(object):
             return response.data.result
         except requests.exceptions.ConnectionError:
             raise MinerConnectionError(
-                "Unable to connect to miner %s" % self.url
+                "Unable to connectt to miner %s" % self.url
             )
         except requests.exceptions.MissingSchema:
             raise MinerMalformedURL(
