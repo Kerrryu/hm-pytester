@@ -1,9 +1,8 @@
 import requests
 from jsonrpcclient import request
-from hm_pyhelper.miner_json_rpc.exceptions import MinerConnectionError
-from hm_pyhelper.miner_json_rpc.exceptions import MinerMalformedURL
-from hm_pyhelper.miner_json_rpc.exceptions import MinerRegionUnset
-from urllib3.exceptions import MaxRetryError
+from hm_pyhelper.miner_json_rpc.exceptions import MinerConnectionError,\
+                                                  MinerMalformedURL,\
+                                                  MinerRegionUnset
 
 
 class Client(object):
@@ -17,22 +16,14 @@ class Client(object):
             return response.data.result
         except requests.exceptions.ConnectionError:
             raise MinerConnectionError(
-                "Unable to connectt to miner %s" % self.url
+                "Unable to connect to miner %s" % self.url
             )
         except requests.exceptions.MissingSchema:
             raise MinerMalformedURL(
                 "Miner JSONRPC URL '%s' is not a valid URL"
                 % self.url
             )
-        except ConnectionError as e:
-            raise MinerConnectionError(
-                "Unable to connect to miner %s" % e
-            ).with_traceback(e.__traceback__)
         except ConnectionRefusedError as e:
-            raise MinerConnectionError(
-                "Unable to connect to miner %s" % e
-            ).with_traceback(e.__traceback__)
-        except MaxRetryError as e:
             raise MinerConnectionError(
                 "Unable to connect to miner %s" % e
             ).with_traceback(e.__traceback__)
@@ -44,15 +35,10 @@ class Client(object):
     def get_height(self):
         try:
             return self.__fetch_data('info_height')
-        except MinerConnectionError as e:
-            raise MinerConnectionError(e).\
-                with_traceback(e.__traceback__)
+        except MinerConnectionError:
+            raise
         except MinerMalformedURL as e:
-            raise MinerMalformedURL(e).\
-                with_traceback(e.__traceback__)
-        except Exception as e:
-            raise MinerConnectionError(e).\
-                with_traceback(e.__traceback__)
+            raise MinerConnectionError(e)
 
     def get_region(self):
         region = self.__fetch_data('info_region')
@@ -64,43 +50,18 @@ class Client(object):
         return region
 
     def get_summary(self):
-        try:
-            return self.__fetch_data('info_summary')
-        except MinerConnectionError as e:
-            raise MinerConnectionError(e).\
-                with_traceback(e.__traceback__)
-        except MinerMalformedURL as e:
-            raise MinerMalformedURL(e).\
-                with_traceback(e.__traceback__)
-        except Exception as e:
-            raise MinerConnectionError(e).\
-                with_traceback(e.__traceback__)
+        return self.__fetch_data('info_summary')
 
     def get_peer_addr(self):
-        try:
-            return self.__fetch_data('peer_addr')
-        except MinerConnectionError as e:
-            raise MinerConnectionError(e).\
-                with_traceback(e.__traceback__)
-        except MinerMalformedURL as e:
-            raise MinerMalformedURL(e).\
-                with_traceback(e.__traceback__)
-        except Exception as e:
-            raise MinerConnectionError(e).\
-                with_traceback(e.__traceback__)
+        return self.__fetch_data('peer_addr')
 
     def get_peer_book(self):
         try:
             return self.__fetch_data('peer_book', addr='self')
-        except MinerConnectionError as e:
-            raise MinerConnectionError(e).\
-                with_traceback(e.__traceback__)
+        except MinerConnectionError:
+            raise
         except MinerMalformedURL as e:
-            raise MinerMalformedURL(e).\
-                with_traceback(e.__traceback__)
-        except Exception as e:
-            raise MinerConnectionError(e).\
-                with_traceback(e.__traceback__)
+            raise MinerConnectionError(e)
 
     def get_firmware_version(self):
         summary = self.get_summary()
