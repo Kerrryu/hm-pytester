@@ -88,6 +88,67 @@ print(retry_get_region("", "/var/pktfwd/region"))
 # EU868
 ```
 
+## LockSingleton
+`LockSingleton` prevents the concurrent access to a resource across threads.
+
+### Methods
+
+**LockSingleton()**
+
+Creates a new `LockSingleton` object.
+  
+**acquire(timeout = DEFAULT_TIMEOUT)**
+
+Waits until the resource is available. DEFAULT_TIMEOUT = 2 seconds 
+ 
+**release()**
+
+Release the resource.
+
+**locked()**
+
+Check if there is an available resource.
+
+### Usage
+```
+lock = LockSingleton()
+
+try:
+    # try to acquire the resource or may raise an exception
+    lock.acquire()
+
+    # do some work
+    print("Starting work...")
+    sleep(5)
+    print("Finished work!")
+
+    # release the resource
+    lock.release()
+except ResourceBusyError:
+    print("The resource is busy now.")
+```
+
+### `@lock_ecc` decorator
+`@lock_ecc(timeout=DEFAULT_TIMEOUT, raise_resource_busy_exception=True):`
+
+This is the convenient decorator wrapping around the `LockSingleton`.
+  - timeout: timeout value. DEFAULT_TIMEOUT = 2 seconds.
+  - raise_resource_busy_exception: set True to raise exception in case of timeout or some error, otherwise just log the error msg
+
+Usage
+```
+@lock_ecc()
+def run_gateway_mfr():
+    return subprocess.run(
+        [gateway_mfr_path, "key", "0"],
+        capture_output=True,
+        check=True
+    )
+
+gateway_mfr_result = run_gateway_mfr()
+log_stdout_stderr(gateway_mfr_result)
+```
+
 ## Testing
 
 To run tests:

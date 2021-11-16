@@ -4,3 +4,15 @@ class MalformedRegionException(Exception):
 
 class SPIUnavailableException(Exception):
     pass
+
+
+class ECCMalfunctionException(Exception):
+    pass
+
+
+class GatewayMFRFileNotFoundException(Exception):
+    pass
+
+
+class MinerFailedToFetchMacAddress(Exception):
+    pass

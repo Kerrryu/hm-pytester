@@ -74,16 +74,16 @@ jobs:
         run: |
           python -m pip install build --user
           
-      - name: Create branch and bump version
-        run: |
-          python -m pip install bump2version
-          git config --global user.email "mrbump@nebra.com"
-          git config --global user.name "Mr Bump Nebra"
-          git checkout -b bumpversion
-          bump2version patch setup.py
-          git commit -am "Automated version bump"
-          git push
-        if: ${{ (github.ref == 'refs/heads/master' && ! contains(toJSON(github.event.commits.*.message), 'Bump version:')) }}
+      # - name: Create branch and bump version
+      #   run: |
+      #     python -m pip install bump2version
+      #     git config --global user.email "mrbump@nebra.com"
+      #     git config --global user.name "Mr Bump Nebra"
+      #     git checkout -b bumpversion
+      #     bump2version patch setup.py
+      #     git commit -am "Automated version bump"
+      #     git push
+      #   if: ${{ (github.ref == 'refs/heads/master' && ! contains(toJSON(github.event.commits.*.message), 'Bump version:')) }}
 
       # - name: Push Commit from Bump2Version
       #   uses: ad-m/github-push-action@master
@@ -105,12 +105,11 @@ jobs:
         id: changed-files
         uses: tj-actions/changed-files@v2.1
 
-      # - name: Publish distribution 📦 to Test PyPI
-      #   uses: pypa/gh-action-pypi-publish@master
-      #   with:
-      #     password: ${{ secrets.TEST_PYPI_API_TOKEN }}
-      #     repository_url: https://test.pypi.org/legacy/
-      #   if: ${{ (github.ref == 'refs/heads/master' && ! contains(toJSON(github.event.commits.*.message), 'Bump version:')) }}
+      - name: Publish distribution 📦 to Test PyPI
+        uses: pypa/gh-action-pypi-publish@master
+        with:
+          password: ${{ secrets.TEST_PYPI_API_TOKEN }}
+          repository_url: https://test.pypi.org/legacy/
         
 
   release:
