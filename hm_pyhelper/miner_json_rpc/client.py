@@ -14,23 +14,14 @@ class Client(object):
         try:
             response = request(self.url, method, **kwargs)
             return response.data.result
-        except requests.exceptions.ConnectionError:
-            raise MinerConnectionError(
-                "Unable to connect to miner %s" % self.url
-            )
-        except requests.exceptions.MissingSchema:
-            raise MinerMalformedURL(
-                "Miner JSONRPC URL '%s' is not a valid URL"
-                % self.url
-            )
+        except requests.exceptions.ConnectionError as e:
+            return str(e)
+        except requests.exceptions.MissingSchema as e:
+            return str(e)
         except ConnectionRefusedError as e:
-            raise MinerConnectionError(
-                "Unable to connect to miner %s" % e
-            ).with_traceback(e.__traceback__)
+            return str(e)
         except Exception as e:
-            raise MinerConnectionError(
-                "Unable to connect to miner %s" % e
-            ).with_traceback(e.__traceback__)
+            return str(e)
 
     def get_height(self):
         try:
