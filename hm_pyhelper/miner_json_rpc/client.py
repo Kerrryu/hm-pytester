@@ -4,6 +4,7 @@ from hm_pyhelper.miner_json_rpc.exceptions import MinerConnectionError
 from hm_pyhelper.miner_json_rpc.exceptions import MinerMalformedURL
 from hm_pyhelper.miner_json_rpc.exceptions import MinerRegionUnset
 
+
 class Client(object):
 
     def __init__(self, url='http://helium-miner:4467'):
@@ -41,23 +42,13 @@ class Client(object):
                 with_traceback(e.__traceback__)
 
     def get_region(self):
-        try:
-            region = self.__fetch_data('info_region')
-            if not region.get('region'):
-                raise MinerRegionUnset(
-                    "Miner at %s does not have an asserted region"
-                    % self.url
-                )
-            return region
-        except MinerConnectionError as e:
-            raise MinerConnectionError(e).\
-                with_traceback(e.__traceback__)
-        except MinerMalformedURL as e:
-            raise MinerMalformedURL(e).\
-                with_traceback(e.__traceback__)
-        except Exception as e:
-            raise MinerConnectionError(e).\
-                with_traceback(e.__traceback__)
+        region = self.__fetch_data('info_region')
+        if not region.get('region'):
+            raise MinerRegionUnset(
+                "Miner at %s does not have an asserted region"
+                % self.url
+            )
+        return region
 
     def get_summary(self):
         try:
