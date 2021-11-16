@@ -4,10 +4,6 @@ from hm_pyhelper.miner_json_rpc.exceptions import MinerConnectionError
 from hm_pyhelper.miner_json_rpc.exceptions import MinerMalformedURL
 from hm_pyhelper.miner_json_rpc.exceptions import MinerRegionUnset
 
-from hm_pyhelper.logger import get_logger
-
-LOGGER = get_logger(__name__)
-
 class Client(object):
 
     def __init__(self, url='http://helium-miner:4467'):
@@ -17,15 +13,19 @@ class Client(object):
         try:
             response = request(self.url, method, **kwargs)
             return response.data.result
-        except requests.exceptions.ConnectionError as e:
-            LOGGER.exception(e)
-            return str(e)
-        except requests.exceptions.MissingSchema as e:
-            LOGGER.exception(e)
-            return str(e)
+        except requests.exceptions.ConnectionError:
+            raise MinerConnectionError(
+                "Unable to connect to miner %s" % self.url
+            )
+        except requests.exceptions.MissingSchema:
+            raise MinerMalformedURL(
+                "Miner JSONRPC URL '%s' is not a valid URL"
+                % self.url
+            )
         except Exception as e:
-            LOGGER.exception(e)
-            return str(e)
+            raise MinerConnectionError(
+                "Unable to connect to miner %s" % e
+            ).with_traceback(e.__traceback__)
 
     def get_height(self):
         try:
@@ -35,6 +35,9 @@ class Client(object):
                 with_traceback(e.__traceback__)
         except MinerMalformedURL as e:
             raise MinerMalformedURL(e).\
+                with_traceback(e.__traceback__)
+        except Exception as e:
+            raise MinerConnectionError(e).\
                 with_traceback(e.__traceback__)
 
     def get_region(self):
@@ -52,6 +55,9 @@ class Client(object):
         except MinerMalformedURL as e:
             raise MinerMalformedURL(e).\
                 with_traceback(e.__traceback__)
+        except Exception as e:
+            raise MinerConnectionError(e).\
+                with_traceback(e.__traceback__)
 
     def get_summary(self):
         try:
@@ -61,6 +67,9 @@ class Client(object):
                 with_traceback(e.__traceback__)
         except MinerMalformedURL as e:
             raise MinerMalformedURL(e).\
+                with_traceback(e.__traceback__)
+        except Exception as e:
+            raise MinerConnectionError(e).\
                 with_traceback(e.__traceback__)
 
     def get_peer_addr(self):
@@ -72,6 +81,9 @@ class Client(object):
         except MinerMalformedURL as e:
             raise MinerMalformedURL(e).\
                 with_traceback(e.__traceback__)
+        except Exception as e:
+            raise MinerConnectionError(e).\
+                with_traceback(e.__traceback__)
 
     def get_peer_book(self):
         try:
@@ -81,6 +93,9 @@ class Client(object):
                 with_traceback(e.__traceback__)
         except MinerMalformedURL as e:
             raise MinerMalformedURL(e).\
+                with_traceback(e.__traceback__)
+        except Exception as e:
+            raise MinerConnectionError(e).\
                 with_traceback(e.__traceback__)
 
     def get_firmware_version(self):
