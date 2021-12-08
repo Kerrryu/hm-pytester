@@ -1,8 +1,8 @@
 import requests
 from jsonrpcclient import request
-from hm_pyhelper.miner_json_rpc.exceptions import MinerConnectionError,\
-                                                  MinerMalformedURL,\
-                                                  MinerRegionUnset
+from hm_pyhelper.miner_json_rpc.exceptions import MinerConnectionError
+from hm_pyhelper.miner_json_rpc.exceptions import MinerMalformedURL
+from hm_pyhelper.miner_json_rpc.exceptions import MinerRegionUnset
 
 
 class Client(object):
@@ -14,22 +14,18 @@ class Client(object):
         try:
             response = request(self.url, method, **kwargs)
             return response.data.result
-        except requests.exceptions.ConnectionError as e:
-            return str(e)
-        except requests.exceptions.MissingSchema as e:
-            return str(e)
-        except ConnectionRefusedError as e:
-            return str(e)
-        except Exception as e:
-            return str(e)
+        except requests.exceptions.ConnectionError:
+            raise MinerConnectionError(
+                "Unable to connect to miner %s" % self.url
+            )
+        except requests.exceptions.MissingSchema:
+            raise MinerMalformedURL(
+                "Miner JSONRPC URL '%s' is not a valid URL"
+                % self.url
+            )
 
     def get_height(self):
-        try:
-            return self.__fetch_data('info_height')
-        except MinerConnectionError:
-            raise
-        except MinerMalformedURL as e:
-            raise MinerConnectionError(e)
+        return self.__fetch_data('info_height')
 
     def get_region(self):
         region = self.__fetch_data('info_region')
@@ -47,12 +43,7 @@ class Client(object):
         return self.__fetch_data('peer_addr')
 
     def get_peer_book(self):
-        try:
-            return self.__fetch_data('peer_book', addr='self')
-        except MinerConnectionError:
-            raise
-        except MinerMalformedURL as e:
-            raise MinerConnectionError(e)
+        return self.__fetch_data('peer_book', addr='self')
 
     def get_firmware_version(self):
         summary = self.get_summary()
